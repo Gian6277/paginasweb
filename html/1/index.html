@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCHIVO NEXO · HTML</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div><span class="kicker">HTML · MISIÓN INTERACTIVA</span><h1>ARCHIVO NEXO</h1><p>// reconstrucción del museo digital //</p><div class="scanner"><span></span></div></div>
+  <div class="meta"><b>Unidad Curricular:</b> Páginas Webs<br><b>Docente:</b> Gianna Giupponi</div>
+</header>
+<main>
+<section id="start" class="card">
+ <span class="badge">TRANSMISIÓN DE ARCHIVO</span>
+ <h2>El Museo Digital perdió su estructura</h2>
+ <p>Una falla dañó las páginas de una exposición. Títulos, párrafos, listas, enlaces e imágenes quedaron desordenados. Tu tarea es reconstruir cada sala escribiendo HTML válido. Cada misión vale 1 punto.</p>
+ <label>Nombre y apellido <input id="student" placeholder="Ej: Ana Rodríguez"></label>
+ <button id="begin">▶ Iniciar reconstrucción</button>
+</section>
+
+<section id="app" class="hidden">
+ <div class="status">
+   <div><small>CALIFICACIÓN</small><strong id="grade">0 / 10</strong></div>
+   <div><small>MISIONES SUPERADAS</small><strong id="done">0 / 10</strong></div>
+   <button id="pdf">📄 Generar PDF</button>
+ </div>
+ <nav id="map"></nav>
+
+ <details class="guide">
+  <summary>📖 Manual HTML básico</summary>
+  <div class="guidegrid">
+   <article><h3>Estructura</h3><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+ &lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Título&lt;/title&gt;
+ &lt;/head&gt;
+ &lt;body&gt;...&lt;/body&gt;
+&lt;/html&gt;</pre></article>
+   <article><h3>Texto</h3><pre>&lt;h1&gt;Título principal&lt;/h1&gt;
+&lt;p&gt;Párrafo&lt;/p&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;strong&gt;Importante&lt;/strong&gt;
+&lt;em&gt;Énfasis&lt;/em&gt;</pre></article>
+   <article><h3>Listas</h3><pre>&lt;ul&gt;
+ &lt;li&gt;Elemento&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+ &lt;li&gt;Paso&lt;/li&gt;
+&lt;/ol&gt;</pre></article>
+   <article><h3>Enlaces e imágenes</h3><pre>&lt;a href="pagina.html"&gt;Ir&lt;/a&gt;
+&lt;a href="..." target="_blank"&gt;Abrir&lt;/a&gt;
+&lt;img src="foto.jpg" alt="Descripción"&gt;</pre></article>
+  </div>
+ </details>
+
+ <section class="mission card"><div class="mission-signal">● CONEXIÓN NEXO ACTIVA <span id="signalDots">···</span></div>
+   <div class="missiontop"><div><span id="zone" class="kicker"></span><h2 id="title"></h2><p id="story"></p></div><span class="point">1 PUNTO</span></div>
+   <details open><summary>📘 Guía de esta misión</summary><div id="lesson" class="lesson"></div></details>
+   <h3>🎯 Consigna</h3><div id="task" class="task"></div>
+   <div class="workspace">
+    <div><div class="label">TU HTML</div><textarea id="editor" spellcheck="false"></textarea>
+      <div class="buttons"><button class="secondary" id="reset">↺ Reiniciar</button><button id="check">✓ Verificar</button></div>
+      <div id="feedback"></div>
+    </div>
+    <div><div class="label">VISTA PREVIA</div><iframe id="preview"></iframe></div>
+   </div>
+   <div class="nav"><button class="secondary" id="prev">← Anterior</button><button id="next" disabled>Siguiente →</button></div>
+ </section>
+</section>
+</main>
+<footer>ARCHIVO NEXO · Páginas Webs · Gianna Giupponi · 2026</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+</body></html>
