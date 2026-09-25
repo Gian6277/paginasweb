@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CENTRAL ÓRBITA · Formularios HTML</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stars"></div>
+<header>
+  <div><span class="eyebrow">SIMULACIÓN · FORMULARIOS HTML</span><h1>CENTRAL <i>ÓRBITA</i></h1><p>// protocolo de recuperación de comunicaciones //</p></div>
+  <div class="course"><b>Unidad Curricular:</b> Páginas Webs<br><b>Docente:</b> Gianna Giupponi</div>
+</header>
+<main>
+<section id="intro" class="panel intro">
+ <div class="orbit">◉<span></span></div>
+ <span class="chip">ALERTA DE SISTEMA</span>
+ <h2>La estación perdió sus canales de comunicación</h2>
+ <p>Ocho módulos quedaron fuera de línea. Para reactivarlos vas a construir formularios HTML cada vez más completos. El sistema analiza tu código: no alcanza con que “se vea parecido”.</p>
+ <div class="guidebox"><b>📡 Tu misión:</b> recuperar los 8 módulos. Cada módulo superado vale 1,25 puntos. Puntaje máximo: <b>10/10</b>. Los intentos incorrectos se registran, pero no descuentan puntos.</div>
+ <label>IDENTIFICACIÓN DEL/LA OPERADOR/A<input id="student" placeholder="Nombre y apellido"></label>
+ <button id="start">INICIAR PROTOCOLO →</button>
+</section>
+
+<section id="app" class="hidden">
+ <div class="hud">
+  <div><small>OPERADOR/A</small><b id="who">—</b></div><div><small>MÓDULOS</small><b id="count">0 / 8</b></div><div><small>NOTA</small><b id="score">0 / 10</b></div>
+  <button id="pdf">▣ INFORME PDF</button>
+ </div>
+ <div id="map" class="map"></div>
+ <details class="manual">
+  <summary>⌁ ABRIR MANUAL DE FORMULARIOS</summary>
+  <div class="manualgrid">
+   <article><h3>Formulario</h3><pre>&lt;form action="#" method="post"&gt;
+ ...
+&lt;/form&gt;</pre><p><code>form</code> contiene los controles. <code>action</code> indica destino y <code>method</code> el método de envío.</p></article>
+   <article><h3>Etiqueta + campo</h3><pre>&lt;label for="nombre"&gt;Nombre&lt;/label&gt;
+&lt;input id="nombre" name="nombre" type="text"&gt;</pre><p><code>for</code> debe relacionarse con el <code>id</code>.</p></article>
+   <article><h3>Opciones</h3><pre>&lt;input type="radio" name="turno"&gt;
+&lt;input type="checkbox"&gt;
+&lt;select&gt;&lt;option&gt;...&lt;/option&gt;&lt;/select&gt;</pre></article>
+   <article><h3>Otros controles</h3><pre>&lt;textarea&gt;&lt;/textarea&gt;
+&lt;input type="email" required&gt;
+&lt;button type="submit"&gt;Enviar&lt;/button&gt;</pre></article>
+  </div>
+ </details>
+ <section class="panel mission">
+  <div class="signal">● ENLACE DE ESTACIÓN <span id="signal">ESTABLE</span></div>
+  <div class="mhead"><div><span id="zone" class="eyebrow"></span><h2 id="title"></h2><p id="story"></p></div><span class="points">+1,25</span></div>
+  <details open class="hint"><summary>◈ GUÍA DEL MÓDULO</summary><div id="lesson"></div></details>
+  <h3>OBJETIVO</h3><div id="task" class="task"></div>
+  <div class="workspace">
+   <div class="code"><div class="bar">terminal_form.html <span>HTML</span></div><textarea id="editor" spellcheck="false"></textarea>
+    <div class="actions"><button class="ghost" id="reset">↺ REINICIAR</button><button id="check">ANALIZAR CÓDIGO ✓</button></div><div id="feedback"></div>
+   </div>
+   <div class="view"><div class="bar">VISTA DE TRANSMISIÓN <span>LIVE</span></div><iframe id="preview"></iframe></div>
+  </div>
+  <div class="nav"><button class="ghost" id="prev">← ANTERIOR</button><button id="next" disabled>SIGUIENTE MÓDULO →</button></div>
+ </section>
+</section>
+</main>
+<footer>CENTRAL ÓRBITA · PÁGINAS WEBS · GIanna Giupponi · 2026</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="script.js"></script>
+</body></html
