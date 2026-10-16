@@ -23,3 +23,5 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;
 background-image:linear-gradient(rgba(0,194,215,.22) 1px,transparent 1px),
 linear-gradient(90deg,rgba(141,98,255,.22) 1px,transparent 1px);
 background-size:36px 36px;z-index:-1}
+
+.exam-policy{padding:12px;border-left:4px solid #ffd84d;background:#252b4c;line-height:1.5}#exam-state{padding:12px;margin-bottom:14px;border:1px solid #00c2d7;background:#202441;font-weight:bold}#exam-overlay{position:fixed;inset:0;z-index:9999;background:rgba(5,6,17,.92);display:flex;align-items:center;justify-content:center;padding:20px}#exam-overlay.hidden{display:none}.exam-dialog{max-width:540px;width:100%;background:#1b1e35;border:3px solid #ffd84d;padding:28px;color:#fff;box-shadow:0 0 45px rgba(0,0,0,.6)}.exam-dialog h2{color:#ffd84d}.exam-dialog p{line-height:1.6}.exam-dialog button{margin-top:14px}#editor:disabled{opacity:.65}#feedback.ok{color:#124622}#feedback.bad{color:#68132b}

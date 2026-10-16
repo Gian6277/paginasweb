@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -17,7 +17,8 @@
  <h2>El Museo Digital perdió su estructura</h2>
  <p>Una falla dañó las páginas de una exposición. Títulos, párrafos, listas, enlaces e imágenes quedaron desordenados. Tu tarea es reconstruir cada sala escribiendo HTML válido. Cada misión vale 1 punto.</p>
  <label>Nombre y apellido <input id="student" placeholder="Ej: Ana Rodríguez"></label>
- <button id="begin">▶ Iniciar reconstrucción</button>
+ <p class="exam-policy">Modo evaluación: el primer cambio de pestaña genera una advertencia; el segundo bloquea los ejercicios. Los incidentes se registran en el informe PDF. Los cambios involuntarios también pueden detectarse.</p>
+  <button id="begin">▶ Iniciar reconstrucción</button>
 </section>
 
 <section id="app" class="hidden">
@@ -26,7 +27,8 @@
    <div><small>MISIONES SUPERADAS</small><strong id="done">0 / 10</strong></div>
    <button id="pdf">📄 Generar PDF</button>
  </div>
- <nav id="map"></nav>
+ <div id="exam-state" role="status" aria-live="polite">Control de pestaña: 0 / 2 salidas</div>
+  <nav id="map"></nav>
 
  <details class="guide">
   <summary>📖 Manual HTML básico</summary>
@@ -67,12 +69,15 @@
       <div class="buttons"><button class="secondary" id="reset">↺ Reiniciar</button><button id="check">✓ Verificar</button></div>
       <div id="feedback"></div>
     </div>
-    <div><div class="label">VISTA PREVIA</div><iframe id="preview"></iframe></div>
+    <div><div class="label">VISTA PREVIA</div><iframe id="preview" sandbox="" title="Vista previa del HTML"></iframe></div>
    </div>
    <div class="nav"><button class="secondary" id="prev">← Anterior</button><button id="next" disabled>Siguiente →</button></div>
  </section>
 </section>
 </main>
+<div id="exam-overlay" class="hidden" role="alertdialog" aria-modal="true" aria-labelledby="exam-overlay-title">
+ <div class="exam-dialog"><h2 id="exam-overlay-title"></h2><p id="exam-overlay-text"></p><button id="exam-ack">Entendido</button><button id="exam-pdf" class="hidden">📄 Generar PDF de entrega</button></div>
+</div>
 <footer>ARCHIVO NEXO · Páginas Webs · Gianna Giupponi · 2026</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="script.js"></script>
