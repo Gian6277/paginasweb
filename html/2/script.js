@@ -9,15 +9,85 @@ const M=[
 {z:"08 · FINAL",t:"Consola de transmisión",story:"Los siete módulos responden. Falta ensamblar la consola completa.",lesson:"Integrá lo practicado: formulario, etiquetas asociadas, tipos de input, opciones, selección, área de texto, validación y envío.",task:"Construí un <code>form method=\"post\"</code> que incluya: un label asociado a un campo de texto; un email <code>required</code>; al menos 2 radio con el mismo <code>name</code>; al menos 2 checkbox; un <code>select</code> con al menos 3 opciones; un <code>textarea required</code>; y un botón <code>submit</code>. Los textos y valores los elegís vos.",starter:"<!-- Consola final -->\n<form method=\"post\">\n\n</form>",check:d=>{let f=d.querySelector('form[method="post"]');if(!f)return false;let labels=[...f.querySelectorAll('label[for]')],linked=labels.some(l=>f.querySelector('#'+CSS.escape(l.getAttribute('for'))));let radios=[...f.querySelectorAll('input[type="radio"][name]')],same=radios.length>=2&&radios.some((r,i)=>radios.some((q,j)=>i!==j&&q.name===r.name));return linked&&!!f.querySelector('input[type="text"]')&&!!f.querySelector('input[type="email"][required]')&&same&&f.querySelectorAll('input[type="checkbox"]').length>=2&&f.querySelectorAll('select option').length>=3&&!!f.querySelector('textarea[required]')&&!!f.querySelector('button[type="submit"],input[type="submit"]')}}
 ];
 let cur=0,solved=new Set(),answers={},fails={},checks={};const $=s=>document.querySelector(s);
+// Control local de evaluación: disuasorio, no equivale a supervisión segura.
+const examKey="central_orbita_control_v1";
+let exam={started:false,student:"",exits:[],locked:false,acknowledged:true};
+function storeExam(){
+ try{localStorage.setItem(examKey,JSON.stringify({exam,cur,solved:[...solved],answers,fails,checks}))}catch(e){}
+}
+function restoreExam(){
+ try{
+  const data=JSON.parse(localStorage.getItem(examKey)||"null");
+  if(!data?.exam?.started)return;
+  exam={...exam,...data.exam};cur=Math.max(0,Math.min(7,Number(data.cur)||0));
+  solved=new Set((data.solved||[]).filter(i=>Number.isInteger(i)&&i>=0&&i<8));
+  answers=data.answers||{};fails=data.fails||{};checks=data.checks||{};
+  $("#student").value=exam.student;$("#who").textContent=exam.student;
+  $("#intro").classList.add("hidden");$("#app").classList.remove("hidden");render();updateExamUI();
+  if(exam.locked)showExamDialog(true);
+  else if(!exam.acknowledged)showExamDialog(false);
+ }catch(e){console.warn("No se pudo restaurar la evaluación",e)}
+}
+function updateExamUI(){
+ $("#exitCount").textContent=`${exam.exits.length} / 2`;
+ $("#examNotice").classList.toggle("locked",exam.locked);
+ $("#editor").disabled=exam.locked;
+ $("#reset").disabled=exam.locked;
+ $("#check").disabled=exam.locked;
+ $("#prev").disabled=exam.locked;
+ $("#next").disabled=exam.locked||!solved.has(cur)||cur===7;
+ document.querySelectorAll("#map button").forEach(b=>{if(exam.locked)b.disabled=true});
+}
+function showExamDialog(locked){
+ $("#examTitle").textContent=locked?"EVALUACIÓN BLOQUEADA":"PRIMERA ADVERTENCIA";
+ $("#examMessage").textContent=locked?
+  "Se detectaron dos salidas de la pestaña. La evaluación quedó bloqueada. Avisá a la docente. Podés generar el PDF con tu trabajo y las incidencias registradas.":
+  "Se detectó una salida de la pestaña de evaluación. Se registró la fecha y la hora. Una segunda salida bloqueará el ejercicio.";
+ $("#examContinue").classList.toggle("hidden",locked);
+ $("#examOverlay").classList.remove("hidden");
+}
+$("#examContinue").onclick=()=>{
+ if(exam.locked)return;
+ exam.acknowledged=true;$("#examOverlay").classList.add("hidden");storeExam();
+};
+document.addEventListener("visibilitychange",()=>{
+ if(!exam.started||exam.locked||!document.hidden)return;
+ answers[cur]=$("#editor").value;
+ exam.exits.push({time:new Date().toISOString(),mission:cur+1});
+ exam.acknowledged=false;
+ if(exam.exits.length>=2)exam.locked=true;
+ updateExamUI();storeExam();
+});
+window.addEventListener("focus",()=>{
+ if(exam.started&&!exam.acknowledged)showExamDialog(exam.locked);
+});
+window.addEventListener("pagehide",()=>{if(exam.started){answers[cur]=$("#editor").value;storeExam()}});
+
 function doc(src){return new DOMParser().parseFromString(src,"text/html")}
 function points(){return Math.round(solved.size*1.25*100)/100}
 function status(){$("#count").textContent=`${solved.size} / 8`;$("#score").textContent=`${points()} / 10`}
-function map(){ $("#map").innerHTML=M.map((m,i)=>`<button data-i="${i}" class="${i===cur?'active':''}" ${i>solved.size?'disabled':''}>${String(i+1).padStart(2,'0')}</button>`).join("");document.querySelectorAll("#map button").forEach(b=>b.onclick=()=>{cur=+b.dataset.i;render()})}
-function render(){let m=M[cur];$("#zone").textContent=m.z;$("#title").textContent=m.t;$("#story").textContent=m.story;$("#lesson").innerHTML=m.lesson;$("#task").innerHTML=m.task;$("#editor").value=answers[cur]??m.starter;$("#feedback").textContent=solved.has(cur)?"✓ MÓDULO RECUPERADO":"";$("#feedback").className=solved.has(cur)?"ok":"";$("#prev").disabled=cur===0;$("#next").disabled=!solved.has(cur)||cur===7;preview();map();status()}
+function map(){ $("#map").innerHTML=M.map((m,i)=>`<button data-i="${i}" class="${i===cur?'active':''}" ${i>solved.size?'disabled':''}>${String(i+1).padStart(2,'0')}</button>`).join("");document.querySelectorAll("#map button").forEach(b=>b.onclick=()=>{if(exam.locked)return;cur=+b.dataset.i;render();storeExam()})}
+function render(){let m=M[cur];$("#zone").textContent=m.z;$("#title").textContent=m.t;$("#story").textContent=m.story;$("#lesson").innerHTML=m.lesson;$("#task").innerHTML=m.task;$("#editor").value=answers[cur]??m.starter;$("#feedback").textContent=solved.has(cur)?"✓ MÓDULO RECUPERADO":"";$("#feedback").className=solved.has(cur)?"ok":"";$("#prev").disabled=cur===0;$("#next").disabled=!solved.has(cur)||cur===7;preview();map();status();if(exam.started)updateExamUI()}
 function preview(){answers[cur]=$("#editor").value;$("#preview").srcdoc=answers[cur]}
-$("#start").onclick=()=>{let n=$("#student").value.trim();if(!n)return alert("Ingresá tu nombre y apellido.");$("#who").textContent=n;$("#intro").classList.add("hidden");$("#app").classList.remove("hidden");render()}
-$("#editor").oninput=()=>{preview();if(solved.has(cur)){solved.delete(cur);status();map();$("#next").disabled=true}}
-$("#reset").onclick=()=>{$("#editor").value=M[cur].starter;preview();$("#feedback").textContent="";$("#feedback").className=""}
-$("#check").onclick=()=>{let src=$("#editor").value;answers[cur]=src;checks[cur]=(checks[cur]||0)+1;let ok=false;try{ok=!!M[cur].check(doc(src),src)}catch(e){}let box=document.querySelector(".mission");box.classList.remove("good","error");if(!ok){fails[cur]=(fails[cur]||0)+1;$("#feedback").className="bad";$("#feedback").textContent="✕ CÓDIGO NO VALIDADO · Revisá todos los requisitos. Intento incorrecto registrado.";box.classList.add("error");setTimeout(()=>box.classList.remove("error"),700);return}solved.add(cur);$("#feedback").className="ok";$("#feedback").textContent="✓ MÓDULO RECUPERADO · +1,25 puntos";box.classList.add("good");setTimeout(()=>box.classList.remove("good"),900);$("#next").disabled=cur===7;status();map()}
-$("#prev").onclick=()=>{if(cur){cur--;render()}};$("#next").onclick=()=>{if(solved.has(cur)&&cur<7){cur++;render()}}
-$("#pdf").onclick=()=>{answers[cur]=$("#editor").value;const {jsPDF}=window.jspdf, p=new jsPDF({unit:"mm",format:"a4"});let y=17,n=$("#who").textContent;p.setFont("helvetica","bold");p.setFontSize(18);p.text("CENTRAL ORBITA - Informe de Formularios HTML",14,y);y+=8;p.setFontSize(10);p.setFont("helvetica","normal");p.text("Unidad Curricular: Paginas Webs",14,y);y+=5;p.text("Docente: Gianna Giupponi",14,y);y+=5;p.text(`Estudiante: ${n}`,14,y);y+=7;p.setFont("helvetica","bold");p.setFontSize(13);p.text(`Nota: ${points()} / 10`,14,y);y+=9;M.forEach((m,i)=>{if(y>255){p.addPage();y=17}let code=(answers[i]||"").trim(),st=solved.has(i)?"SUPERADO":(!code?"SIN RESPUESTA":((checks[i]||0)?"NO SUPERADO":"NO VERIFICADO"));p.setFont("helvetica","bold");p.setFontSize(10);p.text(`${i+1}. ${m.t} - ${st} (1,25 pts)`,14,y);y+=5;p.setFont("helvetica","normal");p.setFontSize(8);p.text(`Intentos incorrectos: ${fails[i]||0}`,14,y);y+=5;p.setFont("courier","normal");let lines=p.splitTextToSize(code||"(sin respuesta)",177);if(y+lines.length*3.4>280){p.addPage();y=17}p.text(lines,14,y);y+=lines.length*3.4+7});p.save(`Central_Orbita_${n.replace(/\s+/g,"_")}.pdf`)}
+$("#start").onclick=()=>{let n=$("#student").value.trim();if(!n)return alert("Ingresá tu nombre y apellido.");$("#who").textContent=n;$("#intro").classList.add("hidden");$("#app").classList.remove("hidden");exam={started:true,student:n,exits:[],locked:false,acknowledged:true};render();storeExam()}
+$("#editor").oninput=()=>{if(exam.locked)return;preview();storeExam();if(solved.has(cur)){solved.delete(cur);status();map();$("#next").disabled=true}}
+$("#reset").onclick=()=>{if(exam.locked)return;$("#editor").value=M[cur].starter;preview();$("#feedback").textContent="";$("#feedback").className="";storeExam()}
+$("#check").onclick=()=>{if(exam.locked)return;let src=$("#editor").value;answers[cur]=src;checks[cur]=(checks[cur]||0)+1;let ok=false;try{ok=!!M[cur].check(doc(src),src)}catch(e){}let box=document.querySelector(".mission");box.classList.remove("good","error");if(!ok){fails[cur]=(fails[cur]||0)+1;$("#feedback").className="bad";$("#feedback").textContent="✕ CÓDIGO NO VALIDADO · Revisá todos los requisitos. Intento incorrecto registrado.";box.classList.add("error");storeExam();setTimeout(()=>box.classList.remove("error"),700);return}solved.add(cur);$("#feedback").className="ok";$("#feedback").textContent="✓ MÓDULO RECUPERADO · +1,25 puntos";box.classList.add("good");storeExam();setTimeout(()=>box.classList.remove("good"),900);$("#next").disabled=cur===7;status();map()}
+$("#prev").onclick=()=>{if(exam.locked)return;if(cur){cur--;render();storeExam()}};$("#next").onclick=()=>{if(exam.locked)return;if(solved.has(cur)&&cur<7){cur++;render();storeExam()}}
+$("#pdf").onclick=()=>{answers[cur]=$("#editor").value;const {jsPDF}=window.jspdf, p=new jsPDF({unit:"mm",format:"a4"});let y=17,n=$("#who").textContent;p.setFont("helvetica","bold");p.setFontSize(18);p.text("CENTRAL ORBITA - Informe de Formularios HTML",14,y);y+=8;p.setFontSize(10);p.setFont("helvetica","normal");p.text("Unidad Curricular: Paginas Webs",14,y);y+=5;p.text("Docente: Gianna Giupponi",14,y);y+=5;p.text(`Estudiante: ${n}`,14,y);y+=7;p.setFont("helvetica","bold");p.setFontSize(13);p.text(`Nota: ${points()} / 10`,14,y);y+=9;M.forEach((m,i)=>{if(y>255){p.addPage();y=17}let code=(answers[i]||"").trim(),st=solved.has(i)?"SUPERADO":(!code?"SIN RESPUESTA":((checks[i]||0)?"NO SUPERADO":"NO VERIFICADO"));p.setFont("helvetica","bold");p.setFontSize(10);p.text(`${i+1}. ${m.t} - ${st} (1,25 pts)`,14,y);y+=5;p.setFont("helvetica","normal");p.setFontSize(8);p.text(`Intentos incorrectos: ${fails[i]||0}`,14,y);y+=5;p.setFont("courier","normal");let lines=p.splitTextToSize(code||"(sin respuesta)",177);if(y+lines.length*3.4>280){p.addPage();y=17}p.text(lines,14,y);y+=lines.length*3.4+7});p.addPage();let ey=18;
+p.setFont("helvetica","bold");p.setFontSize(16);p.text("REGISTRO DE INCIDENCIAS",14,ey);ey+=11;
+p.setFont("helvetica","normal");p.setFontSize(10);
+p.text(`Estudiante: ${n}`,14,ey);ey+=7;
+p.text(`Salidas detectadas: ${exam.exits.length}`,14,ey);ey+=7;
+p.text(`Estado: ${exam.locked?"BLOQUEADA":"SIN BLOQUEO"}`,14,ey);ey+=10;
+exam.exits.forEach((e,i)=>{if(ey>270){p.addPage();ey=18}
+ const when=new Date(e.time).toLocaleString("es-UY",{dateStyle:"short",timeStyle:"medium"});
+ p.text(`${i+1}. ${when} - Modulo ${e.mission}`,14,ey);ey+=7;
+});
+if(!exam.exits.length){p.text("Sin salidas registradas.",14,ey);ey+=8}
+if(ey>245){p.addPage();ey=18}
+p.setFontSize(9);p.text(p.splitTextToSize("Nota: un cambio de visibilidad no demuestra copia. El control local puede ser manipulado y debe ser revisado por la docente.",175),14,ey+6);
+p.save(`Central_Orbita_${n.replace(/\s+/g,"_")}.pdf`)}
+
+// Recuperar un intento existente después de recargar la página.
+restoreExam();

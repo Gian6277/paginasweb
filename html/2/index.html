@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -27,6 +27,7 @@
   <button id="pdf">▣ INFORME PDF</button>
  </div>
  <div id="map" class="map"></div>
+  <div id="examNotice" class="exam-notice" role="status" aria-live="polite">CONTROL DE EVALUACIÓN · Salidas detectadas: <b id="exitCount">0 / 2</b></div>
  <details class="manual">
   <summary>⌁ ABRIR MANUAL DE FORMULARIOS</summary>
   <div class="manualgrid">
@@ -58,6 +59,9 @@
  </section>
 </section>
 </main>
+<div id="examOverlay" class="exam-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="examTitle">
+ <div class="exam-dialog"><h2 id="examTitle">AVISO DE EVALUACIÓN</h2><p id="examMessage"></p><button id="examContinue" type="button">ENTENDIDO · CONTINUAR</button></div>
+</div>
 <footer>CENTRAL ÓRBITA · PÁGINAS WEBS · GIanna Giupponi · 2026</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="script.js"></script>
-</body></html
+</body></html>
